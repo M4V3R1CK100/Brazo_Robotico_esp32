@@ -101,38 +101,43 @@ class _SliderArmsState extends State<SliderArms> {
               SliderComponent(
                 label: "Garra",
                 onChangedCallback: (value) async {
-                  final roundedValue = value.round();
-                  await _api('garra=$roundedValue');
+                  final roundedValue1 = value.round();
+                  await _api('garra=$roundedValue1');
                 },
               ),
               SliderComponent(
                 label: "Muñeca Pitch",
                 onChangedCallback: (value) {
-                  // _api('muneca_pitch=$value');
+                  final roundedValue2 = value.round();
+                  await _api('muneca_pitch=$roundedValue2');
                 },
               ),
               SliderComponent(
                 label: "Muñeca Yaw",
                 onChangedCallback: (value) {
-                  // _api('muneca_yaw=$value');
+                  final roundedValue3 = value.round();
+                  await _api('muneca_yaw=$roundedValue3');
                 },
               ),
               SliderComponent(
                 label: "Codo",
                 onChangedCallback: (value) {
-                  // _api('codo=$value');
+                  final roundedValue4 = value.round();
+                  await _api('codo=$roundedValue4');
                 },
               ),
               SliderComponent(
                 label: "Antebrazo",
                 onChangedCallback: (value) {
-                  // _api('antebrazo=$value');
+                  final roundedValue5 = value.round();
+                  await _api('antebrazo=$roundedValue5');
                 },
               ),
               SliderComponent(
                 label: "Base",
                 onChangedCallback: (value) {
-                  // _api('base=$value');
+                  final roundedValue6 = value.round();
+                  await _api('base=$roundedValue6');
                 },
               ),
             ],
