@@ -65,8 +65,8 @@ class SliderArms extends StatefulWidget {
 class _SliderArmsState extends State<SliderArms> {
   String _ipRed = "192.168.4.1";
 
-  void _api(String intensity) async {
-    var url = Uri.parse('http://$_ipRed/$intensity');
+  Future _api(String command) async {
+    var url = Uri.parse('http://$_ipRed/control?$command');
     var response = await http.get(url);
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -102,17 +102,7 @@ class _SliderArmsState extends State<SliderArms> {
                 label: "Garra",
                 onChangedCallback: (value) async {
                   final roundedValue = value.round();
-
-                  if (roundedValue == 0) {
-                    print(roundedValue);
-                    print("Abrir garra");
-                    _api('H');
-                  } else if (roundedValue == 180) {
-                    print(roundedValue);
-                    print("Cerrar garra");
-                    _api('L');
-                  }
-                  // _api('garra=$value');
+                  await _api('garra=$roundedValue');
                 },
               ),
               SliderComponent(

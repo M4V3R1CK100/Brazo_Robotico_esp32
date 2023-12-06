@@ -11,21 +11,42 @@
   by Elochukwu Ifediora (fedy0)
 */
 
+#include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
+#include <ESP32Servo.h>
 
-#define LED_BUILTIN 2  // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
 
+#define LED_PIN 12  // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
+
+Servo servo_garra;
 // Set these to your desired credentials.
 const char *ssid = "Brazo Robotico";
 const char *password = "12345678";
+int ultimoValor = 0;
+int intentosFallidos = 0;
 
 WiFiServer server(80);
 
+void controlarServo(int angulo){
+   // Ajustar el rango del ángulo según tus necesidades
+  int anguloAjustado = constrain(angulo, 0, 180);
+
+  // Mover el servo al ángulo especificado
+  Serial.print(anguloAjustado);
+  servo_garra.write(anguloAjustado);
+}
+void controlarLED(int valor){
+  int brillo = map(valor, 0, 180, 0, 255);  // Mapear el valor del ángulo a un valor de brillo para el LED
+  analogWrite(LED_PIN, brillo);             // Establecer el brillo del LED
+  Serial.print("Brillo del LED: ");
+  Serial.println(brillo);
+}
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+  servo_garra.attach(3);
 
   Serial.begin(115200);
   Serial.println();
@@ -47,7 +68,7 @@ void setup() {
 
 void loop() {
   WiFiClient client = server.available();   // listen for incoming clients
-
+  
   if (client) {                             // if you get a client,
     Serial.println("New Client.");           // print a message out the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
@@ -77,17 +98,30 @@ void loop() {
           } else {    // if you got a newline, then clear currentLine:
             currentLine = "";
           }
-        } else if (c != '\r'){  // if you got anything else but a carriage return character,
+        }else if (c != '\r'){  // if you got anything else but a carriage return character,
           currentLine += c;      // add it to the end of the currentLine
         }
 
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H")) {
-          digitalWrite(LED_BUILTIN, HIGH);
-                         // GET /H turns the LED on
-        }
-        if (currentLine.endsWith("GET /L")) {
-          digitalWrite(LED_BUILTIN, LOW);                // GET /L turns the LED off
+        if (currentLine.startsWith("GET /control?garra=") and currentLine.endsWith("HTTP/1.1")){
+          // Extraer el valor del servomotor de la solicitud
+          int pos = currentLine.indexOf('=');
+          if (pos != -1) {
+            int valorServomotor = currentLine.substring(pos + 1).toInt();
+            // Filtrar valores incorrectos
+            if ((abs(valorServomotor - ultimoValor)) < 40) {
+              controlarLED(valorServomotor);
+              Serial.print("El ultimo valor: ");
+              Serial.println(ultimoValor);
+              if(valorServomotor != 0){
+                ultimoValor = valorServomotor;}
+                intentosFallidos = 0;
+                Serial.print("El valor del servomotor: ");
+                Serial.println(valorServomotor);
+            } else {
+              intentosFallidos++;
+            }
+            delay(10);
+          }
         }
       }
     }
