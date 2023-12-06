@@ -18,6 +18,8 @@ class SliderComponent extends StatefulWidget {
 class _SliderComponentState extends State<SliderComponent> {
   double _value = 0.0;
   double _previousValue = 0.0;
+  double _divisions = 10;
+  double _max = 180;
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +34,14 @@ class _SliderComponentState extends State<SliderComponent> {
               child: Text("[${_value.round().toString()}]  ${widget.label}",
                   style: const TextStyle(fontSize: 20)),
             ),
-            Text('180.0'),
+            Text(_max.toString()),
           ],
         ),
         Slider(
           value: _value,
           min: 0.0,
-          max: 180.0,
-          divisions: 180,
+          max: _max,
+          divisions: _divisions.toInt(),
           onChanged: (value) {
             if (value != _previousValue) {
               setState(() {
@@ -65,11 +67,18 @@ class SliderArms extends StatefulWidget {
 class _SliderArmsState extends State<SliderArms> {
   String _ipRed = "192.168.4.1";
 
-  Future _api(String command) async {
-    var url = Uri.parse('http://$_ipRed/control?$command');
-    var response = await http.get(url);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  Future _api(String varName, String varValue) async {
+    try {
+      var url = Uri.parse(
+          'http://$_ipRed/servos?varName=$varName&varValue=$varValue');
+      print(url.toString());
+      var response = await http.get(url);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (e) {
+      print('error');
+      print(e);
+    }
   }
 
   @override
@@ -102,42 +111,48 @@ class _SliderArmsState extends State<SliderArms> {
                 label: "Garra",
                 onChangedCallback: (value) async {
                   final roundedValue1 = value.round();
-                  await _api('garra=$roundedValue1');
+                  //  ait _api('garra=$roundedValue1');
+                  await _api('garra', roundedValue1.toString());
                 },
               ),
               SliderComponent(
                 label: "Muñeca Pitch",
-                onChangedCallback: (value) {
+                onChangedCallback: (value) async {
                   final roundedValue2 = value.round();
-                  await _api('muneca_pitch=$roundedValue2');
+                  // await _api('muneca_pitch=$roundedValue2');
+                  await _api('muneca_pitch', roundedValue2.toString());
                 },
               ),
               SliderComponent(
                 label: "Muñeca Yaw",
-                onChangedCallback: (value) {
+                onChangedCallback: (value) async {
                   final roundedValue3 = value.round();
-                  await _api('muneca_yaw=$roundedValue3');
+                  // await _api('muneca_yaw=$roundedValue3');
+                  await _api('muneca_yaw', roundedValue3.toString());
                 },
               ),
               SliderComponent(
                 label: "Codo",
-                onChangedCallback: (value) {
+                onChangedCallback: (value) async {
                   final roundedValue4 = value.round();
-                  await _api('codo=$roundedValue4');
+                  // await _api('codo=$roundedValue4');
+                  await _api('codo', roundedValue4.toString());
                 },
               ),
               SliderComponent(
                 label: "Antebrazo",
-                onChangedCallback: (value) {
+                onChangedCallback: (value) async {
                   final roundedValue5 = value.round();
-                  await _api('antebrazo=$roundedValue5');
+                  // await _api('antebrazo=$roundedValue5');
+                  await _api('antebrazo', roundedValue5.toString());
                 },
               ),
               SliderComponent(
                 label: "Base",
-                onChangedCallback: (value) {
+                onChangedCallback: (value) async {
                   final roundedValue6 = value.round();
-                  await _api('base=$roundedValue6');
+                  // await _api('base=$roundedValue6');
+                  await _api('base', roundedValue6.toString());
                 },
               ),
             ],
