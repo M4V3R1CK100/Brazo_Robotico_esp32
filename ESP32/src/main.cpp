@@ -28,6 +28,43 @@ int intentosFallidos = 0;
 
 WiFiServer server(80);
 
+int servoPin(String servo)
+{
+  if (servo == "garra")
+  {
+    return LED_PIN_1;
+  }
+
+  else if (servo == "muneca_pitch")
+  {
+    return LED_PIN_2;
+  }
+
+  else if (servo == "muneca_yaw")
+  {
+    return LED_PIN_3;
+  }
+
+  else if (servo == "codo")
+  {
+    return LED_PIN_4;
+  }
+
+  else if (servo == "antebrazo")
+  {
+    return LED_PIN_5;
+  }
+
+  else if (servo == "base")
+  {
+    return LED_PIN_6;
+  }
+  else{
+    return 0;
+  }
+
+}
+
 void moverServo(int angulo, String servo)
 {
 
@@ -78,36 +115,8 @@ void controlarLED(int valor, String servo)
   // Ajustar el rango del ángulo según tus necesidades
   int brillo = map(valor, 0, 180,0,255);
 
-  if (servo == "garra")
-  {
-    analogWrite(LED_PIN_1,brillo);
-  }
-
-  else if (servo == "muneca_pitch")
-  {
-    analogWrite(LED_PIN_2,brillo);
-  }
-
-  else if (servo == "muneca_yaw")
-  {
-    analogWrite(LED_PIN_3,brillo);
-  }
-
-  else if (servo == "codo")
-  {
-    analogWrite(LED_PIN_4,brillo);
-  }
-
-  else if (servo == "antebrazo")
-  {
-    analogWrite(LED_PIN_5,brillo);
-  }
-
-  else if (servo == "base")
-  {
-    analogWrite(LED_PIN_6,brillo);
-  }
-
+  analogWrite(servoPin(servo),valor);
+  
   printf("\n\nEl servo %s se ha movido %d\n\n",servo,valor);
 }
 
