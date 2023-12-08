@@ -18,7 +18,7 @@ class SliderComponent extends StatefulWidget {
 class _SliderComponentState extends State<SliderComponent> {
   double _value = 0.0;
   double _previousValue = 0.0;
-  double _divisions = 10;
+  double _divisions = 18;
   double _max = 180;
 
   @override
