@@ -4,14 +4,13 @@
 #include <WiFiAP.h>
 #include <ESP32Servo.h>
 
-#define LED_PIN_1 12
-#define LED_PIN_2 27
-#define LED_PIN_3 25
-#define LED_PIN_4 32
-#define LED_PIN_5 34
-#define LED_PIN_6 23
+#define SERVO_1 12
+#define SERVO_2 27
+#define SERVO_3 25
+#define SERVO_4 32
+#define SERVO_5 34
+#define SERVO_6 23
 
-#define RangoError 40
 
 Servo servo_garra;
 Servo servo_muneca_pitch;
@@ -23,42 +22,45 @@ Servo servo_base;
 // Set these to your desired credentials.
 const char *ssid = "Brazo Robotico";
 const char *password = "12345678";
-int ultimoValor = 0;
-int intentosFallidos = 0;
+
+int startVarName, endVarName, startVarValue, endVarValue;
+
+String varName,varValue;
 
 WiFiServer server(80);
 
 int servoPin(String servo)
 {
-  if (servo == "garra")
+  if      (servo == "garra")
   {
-    return LED_PIN_1;
+    return SERVO_1;
   }
 
   else if (servo == "muneca_pitch")
   {
-    return LED_PIN_2;
+    return SERVO_2;
   }
 
   else if (servo == "muneca_yaw")
   {
-    return LED_PIN_3;
+    return SERVO_3;
   }
 
   else if (servo == "codo")
   {
-    return LED_PIN_4;
+    return SERVO_4;
   }
 
   else if (servo == "antebrazo")
   {
-    return LED_PIN_5;
+    return SERVO_5;
   }
 
   else if (servo == "base")
   {
-    return LED_PIN_6;
+    return SERVO_6;
   }
+  
   else{
     return 0;
   }
@@ -68,44 +70,49 @@ int servoPin(String servo)
 void moverServo(int angulo, String servo)
 {
 
-  // Ajustar el rango del ángulo según tus necesidades
-  int anguloAjustado = constrain(angulo, 0, 180);
-
   if      (servo == "garra")
   {
-    Serial.println(anguloAjustado);
-    servo_garra.write(anguloAjustado);
+
+    servo_garra.write(angulo);
+
   }
 
   else if (servo == "muneca_pitch")
   {
-    Serial.println(anguloAjustado);
-    servo_muneca_pitch.write(anguloAjustado);
+
+    servo_muneca_pitch.write(angulo);
+
   }
 
   else if (servo == "muneca_yaw")
   {
-    Serial.println(anguloAjustado);
-    servo_muneca_yaw.write(anguloAjustado);
+
+    servo_muneca_yaw.write(angulo);
+
   }
 
   else if (servo == "codo")
   {
-    Serial.println(anguloAjustado);
-    servo_codo.write(anguloAjustado);
+
+    servo_codo.write(angulo);
+
   }
 
   else if (servo == "antebrazo")
   {
-    Serial.println(anguloAjustado);
-    servo_antebrazo.write(anguloAjustado);
+
+    servo_antebrazo.write(angulo);
+
   }
 
   else if (servo == "base")
   {
-    Serial.println(anguloAjustado);
-    servo_base.write(anguloAjustado);
+
+    servo_base.write(angulo);
+
   }
+  
+  printf("\n\nnEl servo %s se ha movido %d\n\n",servo,angulo);
 
 }
 
@@ -122,18 +129,14 @@ void controlarLED(int valor, String servo)
 
 void setup()
 {
-  pinMode(LED_PIN_1, OUTPUT);
-  servo_garra.attach(3);
-
-    /*
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-    Falta hacer el attach los pines para cada una de los servos
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////
-    */
+  
+  servo_garra.attach       (SERVO_1);
+  servo_muneca_pitch.attach(SERVO_2);
+  servo_muneca_yaw.attach  (SERVO_3);
+  servo_codo.attach        (SERVO_4);
+  servo_antebrazo.attach   (SERVO_5);
+  servo_base.attach        (SERVO_6);
+  
 
   Serial.begin(115200);
   Serial.println();
@@ -147,6 +150,7 @@ void setup()
     while (1)
       ;
   }
+
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
@@ -161,7 +165,6 @@ void loop()
 
   if (client)
   {                                // if you get a client,
-    Serial.println("New Client."); // print a message out the serial port
     String currentLine = "";       // make a String to hold incoming data from the client
     while (client.connected())
     { // loop while the client's connected
@@ -188,25 +191,25 @@ void loop()
         if (currentLine.startsWith("GET /servos") and currentLine.endsWith("HTTP/1.1"))
         {
           // Extraer el valor del servomotor de la solicitud
-          // int pos = currentLine.indexOf('=');
-          // String nameVar = currentLine;
-          int startVarName = currentLine.indexOf("varName=");
-          int endVarName = currentLine.indexOf("&", startVarName);
-          int startVarValue = currentLine.indexOf("varValue=", endVarName);
-          int endVarValue = currentLine.indexOf(" ", startVarValue);
+
+          startVarName = currentLine.indexOf("varName=");
+          endVarName = currentLine.indexOf("&", startVarName);
+          startVarValue = currentLine.indexOf("varValue=", endVarName);
+          endVarValue = currentLine.indexOf(" ", startVarValue);
 
           // Extraer los valores de varName y varValue
-          String varName = currentLine.substring(startVarName + 8, endVarName);
-          String varValue = currentLine.substring(startVarValue + 9, endVarValue);
+          varName = currentLine.substring(startVarName + 8, endVarName);
+          varValue = currentLine.substring(startVarValue + 9, endVarValue);
 
-          // Ahora varName y varValue contienen los valores de las variables en la URL
-          controlarLED(varValue.toInt(), varName);
-          
+          // Ahora varName y varValue contienen los valores de las variables en la URL          
+          moverServo(varValue.toInt(), varName);
         }
       }
     }
+
     // close the connection:
     client.stop();
     Serial.println("Client Disconnected.");
+
   }
 }
