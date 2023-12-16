@@ -4,7 +4,7 @@
 #include <WiFiAP.h>
 #include <ESP32Servo.h>
 
-#define SERVO_1 12
+#define SERVO_1 19
 #define SERVO_2 27
 #define SERVO_3 25
 #define SERVO_4 32
@@ -29,47 +29,8 @@ String varName,varValue;
 
 WiFiServer server(80);
 
-int servoPin(String servo)
-{
-  if      (servo == "garra")
-  {
-    return SERVO_1;
-  }
-
-  else if (servo == "muneca_pitch")
-  {
-    return SERVO_2;
-  }
-
-  else if (servo == "muneca_yaw")
-  {
-    return SERVO_3;
-  }
-
-  else if (servo == "codo")
-  {
-    return SERVO_4;
-  }
-
-  else if (servo == "antebrazo")
-  {
-    return SERVO_5;
-  }
-
-  else if (servo == "base")
-  {
-    return SERVO_6;
-  }
-  
-  else{
-    return 0;
-  }
-
-}
-
 void moverServo(int angulo, String servo)
 {
-
   if      (servo == "garra")
   {
 
@@ -116,21 +77,11 @@ void moverServo(int angulo, String servo)
 
 }
 
-void controlarLED(int valor, String servo)
-{
-  
-  // Ajustar el rango del ángulo según tus necesidades
-  int brillo = map(valor, 0, 180,0,255);
-
-  analogWrite(servoPin(servo),valor);
-  
-  printf("\n\nEl servo %s se ha movido %d\n\n",servo,valor);
-}
 
 void setup()
 {
   
-  servo_garra.attach       (SERVO_1);
+  servo_garra.attach(SERVO_1,544,2400);
   servo_muneca_pitch.attach(SERVO_2);
   servo_muneca_yaw.attach  (SERVO_3);
   servo_codo.attach        (SERVO_4);

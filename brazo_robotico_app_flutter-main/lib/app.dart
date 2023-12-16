@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class SliderComponent extends StatefulWidget {
+class SliderComponent extends StatefulWidget{
   final String label;
   final ValueChanged<double> onChangedCallback;
 
