@@ -4,20 +4,19 @@
 #include <WiFiAP.h>
 #include <ESP32Servo.h>
 
-#define SERVO_1 19
-#define SERVO_2 27
-#define SERVO_3 25
-#define SERVO_4 32
-#define SERVO_5 34
-#define SERVO_6 23
+#define PIN_base 12 //servo MG966
+#define PIN_antebrazo 14 //servo MG966
+#define PIN_codo 27 //servo MG966
+#define PIN_muneca_yaw 26
+#define PIN_muneca_pitch 25
+#define PIN_garra 33
 
-
-Servo servo_garra;
-Servo servo_muneca_pitch;
-Servo servo_muneca_yaw;
-Servo servo_codo;
-Servo servo_antebrazo;
 Servo servo_base;
+Servo servo_antebrazo;
+Servo servo_codo;
+Servo servo_muneca_yaw;
+Servo servo_muneca_pitch;
+Servo servo_garra;
 
 // Set these to your desired credentials.
 const char *ssid = "Brazo Robotico";
@@ -80,15 +79,22 @@ void moverServo(int angulo, String servo)
 
 void setup()
 {
+  servo_garra.attach(PIN_garra);
+  servo_muneca_pitch.attach(PIN_muneca_pitch);
+  servo_muneca_yaw.attach  (PIN_muneca_yaw);
+  servo_codo.attach        (PIN_codo);
+  servo_antebrazo.attach   (PIN_antebrazo);
+  servo_base.attach        (PIN_base);
   
-  servo_garra.attach(SERVO_1,544,2400);
-  servo_muneca_pitch.attach(SERVO_2);
-  servo_muneca_yaw.attach  (SERVO_3);
-  servo_codo.attach        (SERVO_4);
-  servo_antebrazo.attach   (SERVO_5);
-  servo_base.attach        (SERVO_6);
-  
+  //Posicion Inicial de los servomotores: 
+  servo_base.write(0);
+  servo_antebrazo.write(0);
+  servo_codo.write(0);
+  servo_muneca_yaw.write(0);
+  servo_muneca_yaw.write(0);
+  servo_garra.write(0);
 
+  //Inicalizamos la comunicacion serial
   Serial.begin(115200);
   Serial.println();
   Serial.println("Configuring access point...");
