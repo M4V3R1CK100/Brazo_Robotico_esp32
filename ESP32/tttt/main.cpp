@@ -4,7 +4,6 @@
 #include <WiFiAP.h>
 #include <ESP32Servo.h>
 
-
 #define PIN_base 12      // servo MG966
 #define PIN_antebrazo 14 // servo MG966
 #define PIN_codo 27      // servo MG966
@@ -18,6 +17,7 @@ Servo servo_codo;
 Servo servo_muneca_yaw;
 Servo servo_muneca_pitch;
 Servo servo_garra;
+
 
 int servo_base_value;
 int servo_antebrazo_value;
@@ -38,34 +38,44 @@ WiFiServer server(80);
 
 void moverServo(int angulo, String servo)
 {
-  String myString = String(angulo);
-  Serial.println(myString);
   if (servo == "garra")
   {
-    servo_garra.write(angulo/2);
+    servo_garra.write(angulo);
   }
+
   else if (servo == "muneca_pitch")
   {
+
     servo_muneca_pitch.write(angulo);
   }
+
   else if (servo == "muneca_yaw")
   {
+
     servo_muneca_yaw.write(angulo);
   }
+
   else if (servo == "codo")
   {
+
     servo_codo.write(angulo);
   }
+
   else if (servo == "antebrazo")
   {
+
     servo_antebrazo.write(angulo);
   }
+
   else if (servo == "base")
   {
+
     servo_base.write(angulo);
   }
-  
+
+  printf("\n\nnEl servo %s se ha movido %d\n\n", servo, angulo);
 }
+
 void setup()
 {
   servo_garra.attach(PIN_garra);
@@ -82,6 +92,7 @@ void setup()
   servo_muneca_yaw.write(0);
   servo_muneca_yaw.write(0);
   servo_garra.write(0);
+
   // Inicalizamos la comunicacion serial
   Serial.begin(115200);
   Serial.println();
